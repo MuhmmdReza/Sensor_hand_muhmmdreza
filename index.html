@@ -1,142 +1,518 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<title>NEON HAND GALAXY</title>
-<style>
-:root{--cyan:#16eaff;--blue:#3c5cff;--pink:#ff2caa;--bg:#020516}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:white}
-body{touch-action:none}
-#app{position:fixed;inset:0;overflow:hidden;background:
-radial-gradient(ellipse at 50% 57%,#11164b 0%,#060a2b 28%,#020516 67%,#01020d 100%)}
-#space,#particles{position:absolute;inset:0;width:100%;height:100%;display:block}
-#space{opacity:.7}#particles{z-index:2}
-.vignette{position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.48) 100%)}
-header{position:absolute;z-index:8;top:24px;left:4.5%;display:flex;gap:16px;align-items:center}
-.logo{font-size:44px;line-height:1;font-weight:900;color:#287bff;text-shadow:0 0 18px #164eff;letter-spacing:-5px}
-.title{font-size:29px;letter-spacing:1.5px;font-weight:900;background:linear-gradient(90deg,#16eaff,#657dff,#e94dff);-webkit-background-clip:text;color:transparent}
-.subtitle{font-size:15px;color:#7aa4ff;letter-spacing:.8px;margin-top:6px}
-.hud{position:absolute;z-index:9;right:3.2%;top:24px;width:235px;border:1px solid #1476b9;border-radius:18px;padding:16px 18px;background:rgba(1,10,31,.78);box-shadow:0 0 20px #0b66ff44,inset 0 0 20px #004b5a22}
-.hud .dot{display:inline-block;width:12px;height:12px;background:#00efb0;border-radius:50%;box-shadow:0 0 14px #00efb0;margin-right:12px}
-.hud strong{color:#00e9c0;font-size:16px;letter-spacing:.5px}.hud small{display:block;color:#00e9c0;text-align:center;margin-top:6px;font-size:14px}
-.cameraBox{position:absolute;z-index:10;right:3.2%;top:125px;width:235px;height:205px;border:2px solid #2678ff;border-radius:18px;overflow:hidden;background:#050b20;box-shadow:0 0 24px #1c55ff55}
-#video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:none}
-#landmarks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.camLabel{position:absolute;bottom:0;left:0;right:0;padding:11px;color:#b9ffff;background:linear-gradient(transparent,rgba(0,10,28,.9));font-size:13px;letter-spacing:2px}
-.gesture{position:absolute;z-index:9;right:3.2%;top:347px;width:235px;border:1px solid #164bff;border-radius:16px;background:rgba(2,9,36,.76);padding:17px;display:flex;gap:14px;align-items:center;box-shadow:0 0 18px #263dff33}
-.handIcon{font-size:32px;color:#00eaff}.gesture b{font-size:15px}.gesture span{display:block;color:#00efc0;margin-top:7px;font-size:14px}
-.axis{position:absolute;z-index:5;left:4%;top:138px;width:130px;height:130px;border:1px solid #2044a8;border-radius:50%;display:grid;place-items:center;opacity:.9}
-.axis:before{content:"";position:absolute;inset:18px;border:1px solid #1d3d9a;border-radius:50%}
-.cube{width:42px;height:42px;border:2px solid #2caeff;transform:rotate(30deg) skew(-8deg);box-shadow:0 0 14px #247aff}
-.axis span{position:absolute;color:#3d9dff;font-size:22px}.axis .up{top:0}.axis .down{bottom:0}.axis .left{left:8px}.axis .right{right:8px}.axis label{position:absolute;bottom:-28px;color:#38b8ff;font-weight:bold;font-size:14px}
-.instructions{position:absolute;z-index:8;left:4.5%;bottom:58px;color:#749bff;font-size:15px;line-height:1.4}.instructions b{color:#a2bfff}
-.controls{position:absolute;z-index:10;bottom:42px;left:50%;transform:translateX(-50%);display:flex;gap:80px;align-items:center}
-.control{display:flex;flex-direction:column;align-items:center;gap:14px;color:#10eaff;font-weight:900;letter-spacing:1px;font-size:17px}
-.control.stop{color:#ff56bd}.round{width:112px;height:112px;border-radius:50%;background:rgba(3,11,35,.5);border:3px solid currentColor;box-shadow:0 0 22px currentColor, inset 0 0 18px currentColor;display:grid;place-items:center;cursor:pointer}
-.round:active{transform:scale(.94)}.round svg{width:42px;height:42px;fill:currentColor}.stop .round{color:#ff249f}.stopSquare{width:30px;height:30px;background:currentColor;border-radius:3px}
-.footerHint{position:absolute;right:4.5%;bottom:72px;z-index:8;color:#7da0ff;text-align:right;font-size:14px;line-height:1.4}.footerHint b{color:#9db5ff}
-#startOverlay{position:absolute;z-index:30;inset:0;display:none;place-items:center;background:rgba(0,2,15,.84);backdrop-filter:blur(10px)}
-#startOverlay button{padding:17px 28px;border-radius:40px;border:2px solid #10eaff;background:#06142e;color:#fff;font-weight:900;font-size:16px;box-shadow:0 0 24px #10eaff88}
-@media(max-width:700px){
- header{top:18px;left:24px;gap:8px}.logo{font-size:30px}.title{font-size:20px;letter-spacing:1px}.subtitle{font-size:10px}
- .hud{top:18px;right:18px;width:190px;padding:10px 12px}.hud strong{font-size:12px}.hud small{font-size:11px}
- .cameraBox{top:108px;right:18px;width:190px;height:170px}.gesture{top:288px;right:18px;width:190px;padding:12px}.gesture b{font-size:12px}
- .axis{left:24px;top:110px;transform:scale(.72);transform-origin:top left}.instructions{left:24px;bottom:24px;font-size:11px}.footerHint{display:none}
- .controls{bottom:18px;gap:34px}.round{width:82px;height:82px}.control{font-size:13px;gap:8px}.round svg{width:30px;height:30px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Neon Hand Galaxy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      color: #fff;
+      user-select: none;
+    }
+
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* ===== UI Overlay ===== */
+    .ui {
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .top-left {
+      top: 20px;
+      left: 20px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #00f0ff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title .infinity {
+      font-size: 28px;
+      color: #00f0ff;
+      -webkit-text-fill-color: #00f0ff;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #00f0ff;
+      margin-top: 4px;
+      opacity: 0.9;
+    }
+
+    .status-box {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 20, 40, 0.7);
+      border: 1px solid #00f0ff;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: #00ff9d;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #00ff9d;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #00ff9d;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .finger-status {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(0, 20, 40, 0.7);
+      border: 1px solid #00f0ff;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: #00f0ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ===== Camera Preview di BAWAH ===== */
+    #camera-container {
+      position: absolute;
+      bottom: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 160px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #00f0ff;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      z-index: 20;
+      background: #000;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* mirror */
+    }
+
+    #camera-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* ===== Bottom Controls ===== */
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      z-index: 30;
+      pointer-events: auto;
+    }
+
+    .btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .btn-camera {
+      border-color: #00f0ff;
+      color: #00f0ff;
+    }
+    .btn-camera:hover {
+      background: rgba(0, 240, 255, 0.15);
+      box-shadow: 0 0 20px #00f0ff;
+    }
+
+    .btn-stop {
+      border-color: #ff2d95;
+      color: #ff2d95;
+    }
+    .btn-stop:hover {
+      background: rgba(255, 45, 149, 0.15);
+      box-shadow: 0 0 20px #ff2d95;
+    }
+
+    .btn span {
+      position: absolute;
+      bottom: -22px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 18px;
+      left: 20px;
+      font-size: 12px;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hint-right {
+      position: absolute;
+      bottom: 18px;
+      right: 20px;
+      font-size: 12px;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #00f0ff;
+      font-size: 18px;
+      z-index: 100;
+    }
+  </style>
 </head>
 <body>
-<div id="app">
-<canvas id="space"></canvas><canvas id="particles"></canvas><div class="vignette"></div>
-<header><div class="logo">∞</div><div><div class="title">NEON HAND GALAXY</div><div class="subtitle">DRAW WITH YOUR FINGER &nbsp;•&nbsp; 3D PARTICLE EFFECT</div></div></header>
-<div class="hud"><span class="dot"></span><strong id="status">HAND NOT DETECTED</strong><small id="tracking">Waiting for camera...</small></div>
-<div class="cameraBox"><video id="video" autoplay muted playsinline></video><canvas id="landmarks"></canvas><div class="camLabel">LIVE HAND FEED</div></div>
-<div class="gesture"><div class="handIcon">♧</div><div><b>Index Finger</b><span id="fingerStatus">Waiting...</span></div></div>
-<div class="axis"><div class="cube"></div><span class="up">↑</span><span class="down">↓</span><span class="left">←</span><span class="right">→</span><label>3D</label></div>
-<div class="instructions">▣ &nbsp;<b>Build your imagination</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with neon particles</div>
-<div class="footerHint">Use your index finger<br>to draw anything &nbsp;☝</div>
-<div class="controls">
- <div class="control"><button class="round" id="cameraBtn" aria-label="Camera"><svg viewBox="0 0 24 24"><path d="M9 4 7.5 6H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-2.5L15 4H9zm3 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 15.8 2.8 2.8 0 0 0 12 10.2z"/></svg></button>CAMERA</div>
- <div class="control stop"><button class="round" id="stopBtn" aria-label="Stop"><div class="stopSquare"></div></button>STOP</div>
-</div>
-<div id="startOverlay"><button id="overlayBtn">AKTIFKAN KAMERA</button></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-<script>
-const $=id=>document.getElementById(id);
-const space=$('space'),ctx=space.getContext('2d'),canvas=$('particles'),pctx=canvas.getContext('2d');
-let W=innerWidth,H=innerHeight,points=[],stars=[],stream=null,mpCamera=null,running=false,tracking=false;
-let last={x:0,y:0},hasLast=false,rotation=0,drag=false,px=0;
-function resize(){W=innerWidth;H=innerHeight;space.width=canvas.width=W;space.height=canvas.height=H;stars=Array.from({length:230},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5,a:Math.random()}))}
-addEventListener('resize',resize);resize();
-function background(t){
- ctx.clearRect(0,0,W,H);
- const g=ctx.createRadialGradient(W*.5,H*.58,10,W*.5,H*.58,Math.max(W,H)*.6);g.addColorStop(0,'rgba(40,20,120,.28)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- stars.forEach(s=>{s.a+=.006;ctx.globalAlpha=.2+.35*(Math.sin(s.a)+1)/2;ctx.fillStyle='#5c74ff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
-}
-function addCloud(x,y){
- const amount=65;
- for(let i=0;i<amount;i++){
-   const a=Math.random()*Math.PI*2,rad=Math.pow(Math.random(),.55)*18;
-   points.push({x:x+(Math.random()-.5)*5+Math.cos(a)*rad,y:y+(Math.random()-.5)*5+Math.sin(a)*rad*.8,z:(Math.random()-.5)*70,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,life:1,size:.5+Math.random()*2.1,h:Math.random()<.5?195+Math.random()*45:285+Math.random()*55});
- }
- if(points.length>18000)points.splice(0,points.length-18000);
-}
-function drawParticles(t){
- pctx.clearRect(0,0,W,H);
- const cx=W*.5,cy=H*.54;
- // A dense cloud with independent particles: no connecting lines.
- for(let i=0;i<points.length;i++){
-  const p=points[i];p.life-=.0014;p.x+=p.vx;p.y+=p.vy;
-  const z=p.z+Math.sin(t*.001+i)*10;const scale=1+z/250;
-  const x=cx+(p.x-cx)*scale,y=cy+(p.y-cy)*scale;
-  if(p.life<=0)continue;
-  const color=`hsl(${p.h},100%,${65+Math.random()*25}%)`;
-  pctx.globalAlpha=Math.max(0,p.life)*.8;
-  pctx.shadowBlur=7;pctx.shadowColor=color;pctx.fillStyle=color;
-  pctx.beginPath();pctx.arc(x,y,Math.max(.5,p.size*scale),0,Math.PI*2);pctx.fill();
- }
- pctx.globalAlpha=1;pctx.shadowBlur=0;
-}
-function loop(t){background(t);drawParticles(t);requestAnimationFrame(loop)}requestAnimationFrame(loop);
-function isIndexExtended(l){return l[8].y<l[6].y && l[6].y<l[5].y}
-function handleResults(res){
- const lc=$('landmarks'),lctx=lc.getContext('2d');lc.width=lc.clientWidth||235;lc.height=lc.clientHeight||205;lctx.clearRect(0,0,lc.width,lc.height);
- if(!res.multiHandLandmarks||!res.multiHandLandmarks.length){tracking=false;$('status').textContent='HAND NOT DETECTED';$('tracking').textContent='Show your hand';$('fingerStatus').textContent='Waiting...';return}
- tracking=true;const hand=res.multiHandLandmarks[0],tip=hand[8];
- if(window.drawConnectors){drawConnectors(lctx,hand,HAND_CONNECTIONS,{color:'#21eacb',lineWidth:2});drawLandmarks(lctx,hand,{color:'#20ffe0',lineWidth:1,radius:3})}
- const x=(1-tip.x)*W,y=tip.y*H;
- const extended=isIndexExtended(hand);
- $('status').textContent='HAND DETECTED';$('tracking').textContent='Tracking...';$('fingerStatus').textContent=extended?'Detected':'Raise index finger';
- if(extended){
-   if(!hasLast){last={x,y};hasLast=true}
-   const dx=x-last.x,dy=y-last.y,dist=Math.hypot(dx,dy),steps=Math.max(1,Math.ceil(dist/7));
-   for(let s=1;s<=steps;s++){const k=s/steps;addCloud(last.x+dx*k,last.y+dy*k)}
-   last={x,y};
- }else hasLast=false;
-}
-const hands=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
-hands.setOptions({maxNumHands:1,modelComplexity:1,minDetectionConfidence:.65,minTrackingConfidence:.6});
-hands.onResults(handleResults);
-async function startCamera(){
- try{
-  if(stream)stopCamera();
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30,max:30}},audio:false});
-  $('video').srcObject=stream;$('video').style.display='block';running=true;
-  mpCamera=new Camera($('video'),{onFrame:async()=>{if(running)await hands.send({image:$('video')})},width:1280,height:720});mpCamera.start();
-  $('startOverlay').style.display='none';
-  if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
- }catch(e){$('status').textContent='CAMERA ERROR';$('tracking').textContent='Allow camera permission';alert('Kamera tidak bisa dibuka. Pastikan HTTPS/localhost dan izin kamera aktif.')}
-}
-function stopCamera(){running=false;hasLast=false;if(mpCamera&&mpCamera.stop)mpCamera.stop();if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('video').style.display='none';$('status').textContent='HAND NOT DETECTED';$('tracking').textContent='Camera stopped';$('fingerStatus').textContent='Stopped';}
-$('cameraBtn').onclick=startCamera;$('stopBtn').onclick=stopCamera;$('overlayBtn').onclick=startCamera;
-addEventListener('pointerdown',e=>{drag=true;px=e.clientX});addEventListener('pointerup',()=>drag=false);addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-px)*.002;px=e.clientX}});
-</script>
+  <div class="loading" id="loading">Loading Hand Tracking...</div>
+
+  <canvas id="canvas"></canvas>
+
+  <!-- UI Top -->
+  <div class="ui top-left">
+    <div class="title">
+      <span class="infinity">∞</span>
+      NEON HAND GALAXY
+    </div>
+    <div class="subtitle">DRAW WITH YOUR FINGER • 3D PARTICLE EFFECT</div>
+  </div>
+
+  <div class="status-box" id="statusBox">
+    <div class="status-dot"></div>
+    <span id="statusText">HAND DETECTED • Tracking...</span>
+  </div>
+
+  <div class="finger-status" id="fingerStatus">
+    ✋ Index Finger Detected
+  </div>
+
+  <!-- Camera Preview di BAWAH -->
+  <div id="camera-container">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="camera-overlay"></canvas>
+  </div>
+
+  <!-- Bottom Controls -->
+  <div class="bottom-bar">
+    <div class="hint">
+      <span style="font-size:16px">🧊</span>
+      Build your imagination with neon particles
+    </div>
+
+    <button class="btn btn-camera" id="btnCamera" title="Start Camera">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <span>CAMERA</span>
+    </button>
+
+    <button class="btn btn-stop" id="btnStop" title="Stop">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="6" width="12" height="12" rx="1"/>
+      </svg>
+      <span>STOP</span>
+    </button>
+
+    <div class="hint-right">
+      Use your index finger to draw anything
+      <span style="font-size:16px">👆</span>
+    </div>
+  </div>
+
+  <!-- MediaPipe -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+  <script>
+    // ====================== SETUP ======================
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const video = document.getElementById('video');
+    const camOverlay = document.getElementById('camera-overlay');
+    const camCtx = camOverlay.getContext('2d');
+    const loading = document.getElementById('loading');
+    const statusText = document.getElementById('statusText');
+    const fingerStatus = document.getElementById('fingerStatus');
+
+    let width, height;
+    let particles = [];
+    let isRunning = false;
+    let camera = null;
+    let lastFinger = null;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      camOverlay.width = 220;
+      camOverlay.height = 160;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ====================== PARTICLE SYSTEM ======================
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 1.8;
+        this.vy = (Math.random() - 0.5) * 1.8;
+        this.life = 1.0;
+        this.decay = 0.008 + Math.random() * 0.012;
+        this.size = 1.5 + Math.random() * 3.5;
+        this.hue = 280 + Math.random() * 80; // purple → pink → cyan
+        this.trail = [];
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.97;
+        this.vy *= 0.97;
+        this.life -= this.decay;
+
+        // slight orbit / swirl
+        this.vx += Math.sin(this.y * 0.01) * 0.05;
+        this.vy += Math.cos(this.x * 0.01) * 0.05;
+
+        this.trail.push({x: this.x, y: this.y, life: this.life});
+        if (this.trail.length > 8) this.trail.shift();
+      }
+
+      draw(ctx) {
+        // trail
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
+          const alpha = (i / this.trail.length) * t.life * 0.6;
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, this.size * 0.6, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${alpha})`;
+          ctx.fill();
+        }
+
+        // main particle
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.life})`;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = `hsla(${this.hue}, 100%, 60%, 0.8)`;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    function emitParticles(x, y, count = 6) {
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle(x, y));
+      }
+      // limit total particles
+      if (particles.length > 1200) {
+        particles.splice(0, particles.length - 1200);
+      }
+    }
+
+    // ====================== HAND TRACKING ======================
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.6
+    });
+
+    hands.onResults(onResults);
+
+    function onResults(results) {
+      // clear camera overlay
+      camCtx.save();
+      camCtx.clearRect(0, 0, camOverlay.width, camOverlay.height);
+      camCtx.drawImage(results.image, 0, 0, camOverlay.width, camOverlay.height);
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        
+        // Index finger tip = landmark 8
+        const tip = landmarks[8];
+        
+        // Convert to canvas coordinates (mirrored)
+        const x = (1 - tip.x) * width;
+        const y = tip.y * height;
+
+        // Draw skeleton on camera preview
+        drawConnectors(camCtx, landmarks, HAND_CONNECTIONS, {color: '#00f0ff', lineWidth: 2});
+        drawLandmarks(camCtx, landmarks, {color: '#ff2d95', lineWidth: 1, radius: 3});
+
+        // Highlight index finger
+        camCtx.beginPath();
+        camCtx.arc(tip.x * camOverlay.width, tip.y * camOverlay.height, 8, 0, Math.PI*2);
+        camCtx.strokeStyle = '#00ff9d';
+        camCtx.lineWidth = 2;
+        camCtx.stroke();
+
+        // Emit particles
+        if (lastFinger) {
+          const dist = Math.hypot(x - lastFinger.x, y - lastFinger.y);
+          const count = Math.min(12, Math.floor(dist / 3) + 3);
+          emitParticles(x, y, count);
+        } else {
+          emitParticles(x, y, 8);
+        }
+        lastFinger = {x, y};
+
+        statusText.textContent = "HAND DETECTED • Tracking...";
+        fingerStatus.style.display = "flex";
+        fingerStatus.innerHTML = "✋ Index Finger Detected";
+      } else {
+        lastFinger = null;
+        statusText.textContent = "Searching for hand...";
+        fingerStatus.style.display = "none";
+      }
+      camCtx.restore();
+    }
+
+    // ====================== ANIMATION LOOP ======================
+    function animate() {
+      // fade background slightly for trail effect
+      ctx.fillStyle = 'rgba(0, 0, 8, 0.18)';
+      ctx.fillRect(0, 0, width, height);
+
+      // update & draw particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw(ctx);
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // ====================== CONTROLS ======================
+    document.getElementById('btnCamera').addEventListener('click', async () => {
+      if (isRunning) return;
+      
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: 640, height: 480 }
+        });
+        video.srcObject = stream;
+        await video.play();
+
+        camera = new Camera(video, {
+          onFrame: async () => {
+            await hands.send({image: video});
+          },
+          width: 640,
+          height: 480
+        });
+        camera.start();
+        isRunning = true;
+        loading.style.display = 'none';
+      } catch (err) {
+        alert('Kamera tidak bisa diakses. Pastikan izin kamera diberikan.');
+        console.error(err);
+      }
+    });
+
+    document.getElementById('btnStop').addEventListener('click', () => {
+      if (camera) {
+        camera.stop();
+        camera = null;
+      }
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(t => t.stop());
+        video.srcObject = null;
+      }
+      isRunning = false;
+      particles = [];
+      lastFinger = null;
+      statusText.textContent = "Stopped";
+      fingerStatus.style.display = "none";
+      loading.style.display = 'block';
+      loading.textContent = "Camera Stopped";
+    });
+
+    // Start animation immediately
+    animate();
+    loading.textContent = "Klik tombol CAMERA untuk mulai";
+  </script>
 </body>
 </html>
