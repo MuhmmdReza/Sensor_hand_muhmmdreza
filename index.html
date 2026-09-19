@@ -12,11 +12,11 @@
       font-family: 'Segoe UI', system-ui, sans-serif;
     }
 
-    body {
+    html, body {
       background: #000;
       overflow: hidden;
-      height: 100vh;
-      width: 100vw;
+      height: 100%;
+      width: 100%;
       color: #fff;
       user-select: none;
     }
@@ -30,7 +30,6 @@
       z-index: 1;
     }
 
-    /* ===== UI Overlay ===== */
     .ui {
       position: absolute;
       z-index: 10;
@@ -38,12 +37,12 @@
     }
 
     .top-left {
-      top: 20px;
-      left: 20px;
+      top: 18px;
+      left: 18px;
     }
 
     .title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: 1px;
       background: linear-gradient(90deg, #00f0ff, #ff00ff);
@@ -51,80 +50,80 @@
       -webkit-text-fill-color: transparent;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .title .infinity {
-      font-size: 28px;
+      font-size: 26px;
       color: #00f0ff;
       -webkit-text-fill-color: #00f0ff;
     }
 
     .subtitle {
-      font-size: 12px;
+      font-size: 11px;
       color: #00f0ff;
-      margin-top: 4px;
-      opacity: 0.9;
+      margin-top: 3px;
+      opacity: 0.85;
     }
 
     .status-box {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(0, 20, 40, 0.7);
+      top: 18px;
+      right: 18px;
+      background: rgba(0, 15, 30, 0.75);
       border: 1px solid #00f0ff;
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-size: 13px;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 12px;
       color: #00ff9d;
       display: flex;
       align-items: center;
-      gap: 8px;
-      backdrop-filter: blur(8px);
+      gap: 7px;
+      backdrop-filter: blur(6px);
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background: #00ff9d;
       border-radius: 50%;
-      box-shadow: 0 0 8px #00ff9d;
-      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 6px #00ff9d;
+      animation: pulse 1.4s infinite;
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      50% { opacity: 0.35; }
     }
 
     .finger-status {
       position: absolute;
-      top: 70px;
-      right: 20px;
-      background: rgba(0, 20, 40, 0.7);
+      top: 60px;
+      right: 18px;
+      background: rgba(0, 15, 30, 0.75);
       border: 1px solid #00f0ff;
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-size: 13px;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
       color: #00f0ff;
-      display: flex;
+      display: none;
       align-items: center;
-      gap: 8px;
-      backdrop-filter: blur(8px);
+      gap: 6px;
+      backdrop-filter: blur(6px);
     }
 
-    /* ===== Camera Preview di BAWAH ===== */
+    /* Camera Preview - bawah & tidak distorsi */
     #camera-container {
       position: absolute;
-      bottom: 110px;
+      bottom: 105px;
       left: 50%;
       transform: translateX(-50%);
-      width: 220px;
-      height: 160px;
-      border-radius: 16px;
+      width: 200px;
+      height: 150px;
+      border-radius: 14px;
       overflow: hidden;
       border: 2px solid #00f0ff;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.45);
       z-index: 20;
       background: #000;
     }
@@ -133,7 +132,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(-1); /* mirror */
+      /* TANPA mirror */
     }
 
     #camera-overlay {
@@ -145,27 +144,26 @@
       pointer-events: none;
     }
 
-    /* ===== Bottom Controls ===== */
     .bottom-bar {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 100px;
-      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      height: 95px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 40px;
+      gap: 36px;
       z-index: 30;
       pointer-events: auto;
     }
 
     .btn {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      border: 3px solid;
+      border: 2.5px solid;
       background: transparent;
       display: flex;
       align-items: center;
@@ -181,7 +179,7 @@
     }
     .btn-camera:hover {
       background: rgba(0, 240, 255, 0.15);
-      box-shadow: 0 0 20px #00f0ff;
+      box-shadow: 0 0 18px #00f0ff;
     }
 
     .btn-stop {
@@ -190,37 +188,47 @@
     }
     .btn-stop:hover {
       background: rgba(255, 45, 149, 0.15);
-      box-shadow: 0 0 20px #ff2d95;
+      box-shadow: 0 0 18px #ff2d95;
+    }
+
+    .btn-fs {
+      border-color: #a0f;
+      color: #c8f;
+    }
+    .btn-fs:hover {
+      background: rgba(170, 0, 255, 0.15);
+      box-shadow: 0 0 18px #a0f;
     }
 
     .btn span {
       position: absolute;
-      bottom: -22px;
-      font-size: 11px;
+      bottom: -20px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     .hint {
       position: absolute;
-      bottom: 18px;
-      left: 20px;
-      font-size: 12px;
-      color: #aaa;
+      bottom: 16px;
+      left: 16px;
+      font-size: 11px;
+      color: #999;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .hint-right {
       position: absolute;
-      bottom: 18px;
-      right: 20px;
-      font-size: 12px;
-      color: #aaa;
+      bottom: 16px;
+      right: 16px;
+      font-size: 11px;
+      color: #999;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .loading {
@@ -229,17 +237,20 @@
       left: 50%;
       transform: translate(-50%, -50%);
       color: #00f0ff;
-      font-size: 18px;
+      font-size: 16px;
       z-index: 100;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="loading" id="loading">Loading Hand Tracking...</div>
+  <div class="loading" id="loading">
+    Klik CAMERA untuk mulai<br>
+    <small style="font-size:12px;opacity:0.7">Lalu klik FULLSCREEN</small>
+  </div>
 
   <canvas id="canvas"></canvas>
 
-  <!-- UI Top -->
   <div class="ui top-left">
     <div class="title">
       <span class="infinity">∞</span>
@@ -250,55 +261,58 @@
 
   <div class="status-box" id="statusBox">
     <div class="status-dot"></div>
-    <span id="statusText">HAND DETECTED • Tracking...</span>
+    <span id="statusText">Menunggu kamera...</span>
   </div>
 
   <div class="finger-status" id="fingerStatus">
     ✋ Index Finger Detected
   </div>
 
-  <!-- Camera Preview di BAWAH -->
   <div id="camera-container">
     <video id="video" autoplay playsinline muted></video>
     <canvas id="camera-overlay"></canvas>
   </div>
 
-  <!-- Bottom Controls -->
   <div class="bottom-bar">
     <div class="hint">
-      <span style="font-size:16px">🧊</span>
+      <span>🧊</span>
       Build your imagination with neon particles
     </div>
 
-    <button class="btn btn-camera" id="btnCamera" title="Start Camera">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button class="btn btn-camera" id="btnCamera">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
         <circle cx="12" cy="13" r="4"/>
       </svg>
       <span>CAMERA</span>
     </button>
 
-    <button class="btn btn-stop" id="btnStop" title="Stop">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+    <button class="btn btn-stop" id="btnStop">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <rect x="6" y="6" width="12" height="12" rx="1"/>
       </svg>
       <span>STOP</span>
     </button>
 
+    <button class="btn btn-fs" id="btnFullscreen">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+      <span>FULLSCREEN</span>
+    </button>
+
     <div class="hint-right">
       Use your index finger to draw anything
-      <span style="font-size:16px">👆</span>
+      <span>👆</span>
     </div>
   </div>
 
-  <!-- MediaPipe -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
   <script>
-    // ====================== SETUP ======================
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const video = document.getElementById('video');
@@ -313,78 +327,100 @@
     let isRunning = false;
     let camera = null;
     let lastFinger = null;
+    let galaxyCenter = { x: 0, y: 0 };
+    let time = 0;
 
     function resize() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      camOverlay.width = 220;
-      camOverlay.height = 160;
+      camOverlay.width = 200;
+      camOverlay.height = 150;
+      galaxyCenter = { x: width / 2, y: height / 2 - 40 };
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // ====================== PARTICLE SYSTEM ======================
+    // ====================== PARTICLE ======================
     class Particle {
-      constructor(x, y) {
+      constructor(x, y, isGalaxy = false) {
         this.x = x;
         this.y = y;
-        this.vx = (Math.random() - 0.5) * 1.8;
-        this.vy = (Math.random() - 0.5) * 1.8;
-        this.life = 1.0;
-        this.decay = 0.008 + Math.random() * 0.012;
-        this.size = 1.5 + Math.random() * 3.5;
-        this.hue = 280 + Math.random() * 80; // purple → pink → cyan
-        this.trail = [];
+        this.ox = x; // original for galaxy pull
+        this.oy = y;
+        this.vx = (Math.random() - 0.5) * 2.2;
+        this.vy = (Math.random() - 0.5) * 2.2;
+        this.life = 1;
+        this.decay = isGalaxy ? 0.003 + Math.random() * 0.004 : 0.012 + Math.random() * 0.01;
+        this.size = 0.7 + Math.random() * 1.6;   // LEBIH KECIL
+        this.hue = 270 + Math.random() * 90;
+        this.isGalaxy = isGalaxy;
+        this.angle = Math.random() * Math.PI * 2;
+        this.radius = Math.random() * 180 + 40;
+        this.speed = 0.008 + Math.random() * 0.012;
       }
 
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vx *= 0.97;
-        this.vy *= 0.97;
+      update(finger) {
+        if (this.isGalaxy && !finger) {
+          // Galaksi berputar
+          this.angle += this.speed;
+          this.x = galaxyCenter.x + Math.cos(this.angle) * this.radius;
+          this.y = galaxyCenter.y + Math.sin(this.angle) * this.radius * 0.6;
+          this.vx *= 0.95;
+          this.vy *= 0.95;
+        } else if (finger) {
+          // Tarik ke jari + gerak cepat
+          const dx = finger.x - this.x;
+          const dy = finger.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          this.vx += (dx / dist) * 0.35;
+          this.vy += (dy / dist) * 0.35;
+          this.vx *= 0.92;
+          this.vy *= 0.92;
+          this.x += this.vx;
+          this.y += this.vy;
+        } else {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vx *= 0.96;
+          this.vy *= 0.96;
+        }
+
         this.life -= this.decay;
-
-        // slight orbit / swirl
-        this.vx += Math.sin(this.y * 0.01) * 0.05;
-        this.vy += Math.cos(this.x * 0.01) * 0.05;
-
-        this.trail.push({x: this.x, y: this.y, life: this.life});
-        if (this.trail.length > 8) this.trail.shift();
       }
 
       draw(ctx) {
-        // trail
-        for (let i = 0; i < this.trail.length; i++) {
-          const t = this.trail[i];
-          const alpha = (i / this.trail.length) * t.life * 0.6;
-          ctx.beginPath();
-          ctx.arc(t.x, t.y, this.size * 0.6, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${alpha})`;
-          ctx.fill();
-        }
-
-        // main particle
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.life})`;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = `hsla(${this.hue}, 100%, 60%, 0.8)`;
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 68%, ${this.life * 0.9})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `hsla(${this.hue}, 100%, 60%, 0.7)`;
         ctx.fill();
         ctx.shadowBlur = 0;
       }
     }
 
-    function emitParticles(x, y, count = 6) {
+    // Buat galaksi awal
+    function createGalaxy(count = 450) {
+      particles = [];
       for (let i = 0; i < count; i++) {
-        particles.push(new Particle(x, y));
-      }
-      // limit total particles
-      if (particles.length > 1200) {
-        particles.splice(0, particles.length - 1200);
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * 160 + 30;
+        const x = galaxyCenter.x + Math.cos(angle) * r;
+        const y = galaxyCenter.y + Math.sin(angle) * r * 0.55;
+        particles.push(new Particle(x, y, true));
       }
     }
 
-    // ====================== HAND TRACKING ======================
+    function emitFromFinger(x, y, count = 5) {
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle(x + (Math.random()-0.5)*8, y + (Math.random()-0.5)*8, false));
+      }
+      if (particles.length > 900) {
+        particles.splice(0, particles.length - 900);
+      }
+    }
+
+    // ====================== HAND ======================
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
     });
@@ -392,74 +428,71 @@
     hands.setOptions({
       maxNumHands: 1,
       modelComplexity: 1,
-      minDetectionConfidence: 0.7,
-      minTrackingConfidence: 0.6
+      minDetectionConfidence: 0.65,
+      minTrackingConfidence: 0.55
     });
 
     hands.onResults(onResults);
 
     function onResults(results) {
-      // clear camera overlay
       camCtx.save();
       camCtx.clearRect(0, 0, camOverlay.width, camOverlay.height);
       camCtx.drawImage(results.image, 0, 0, camOverlay.width, camOverlay.height);
 
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const landmarks = results.multiHandLandmarks[0];
-        
-        // Index finger tip = landmark 8
         const tip = landmarks[8];
-        
-        // Convert to canvas coordinates (mirrored)
-        const x = (1 - tip.x) * width;
+
+        // TANPA mirror
+        const x = tip.x * width;
         const y = tip.y * height;
 
-        // Draw skeleton on camera preview
-        drawConnectors(camCtx, landmarks, HAND_CONNECTIONS, {color: '#00f0ff', lineWidth: 2});
-        drawLandmarks(camCtx, landmarks, {color: '#ff2d95', lineWidth: 1, radius: 3});
+        drawConnectors(camCtx, landmarks, HAND_CONNECTIONS, {color: '#00f0ff', lineWidth: 1.5});
+        drawLandmarks(camCtx, landmarks, {color: '#ff2d95', lineWidth: 1, radius: 2.5});
 
-        // Highlight index finger
         camCtx.beginPath();
-        camCtx.arc(tip.x * camOverlay.width, tip.y * camOverlay.height, 8, 0, Math.PI*2);
+        camCtx.arc(tip.x * camOverlay.width, tip.y * camOverlay.height, 7, 0, Math.PI*2);
         camCtx.strokeStyle = '#00ff9d';
         camCtx.lineWidth = 2;
         camCtx.stroke();
 
-        // Emit particles
         if (lastFinger) {
           const dist = Math.hypot(x - lastFinger.x, y - lastFinger.y);
-          const count = Math.min(12, Math.floor(dist / 3) + 3);
-          emitParticles(x, y, count);
+          const count = Math.min(9, Math.floor(dist / 2.5) + 2);
+          emitFromFinger(x, y, count);
         } else {
-          emitParticles(x, y, 8);
+          emitFromFinger(x, y, 6);
         }
-        lastFinger = {x, y};
+        lastFinger = { x, y };
 
         statusText.textContent = "HAND DETECTED • Tracking...";
         fingerStatus.style.display = "flex";
-        fingerStatus.innerHTML = "✋ Index Finger Detected";
       } else {
         lastFinger = null;
-        statusText.textContent = "Searching for hand...";
+        statusText.textContent = "Mencari tangan...";
         fingerStatus.style.display = "none";
       }
       camCtx.restore();
     }
 
-    // ====================== ANIMATION LOOP ======================
+    // ====================== ANIMATE ======================
     function animate() {
-      // fade background slightly for trail effect
-      ctx.fillStyle = 'rgba(0, 0, 8, 0.18)';
+      time += 0.016;
+      ctx.fillStyle = 'rgba(0, 0, 6, 0.22)';
       ctx.fillRect(0, 0, width, height);
 
-      // update & draw particles
+      const finger = lastFinger;
+
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
-        p.update();
+        p.update(finger);
         p.draw(ctx);
-        if (p.life <= 0) {
-          particles.splice(i, 1);
-        }
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+
+      // Jaga jumlah partikel galaksi tetap ada
+      if (!finger && particles.length < 380) {
+        createGalaxy(80);
       }
 
       requestAnimationFrame(animate);
@@ -468,17 +501,16 @@
     // ====================== CONTROLS ======================
     document.getElementById('btnCamera').addEventListener('click', async () => {
       if (isRunning) return;
-      
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: 640, height: 480 }
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
         });
         video.srcObject = stream;
         await video.play();
 
         camera = new Camera(video, {
           onFrame: async () => {
-            await hands.send({image: video});
+            await hands.send({ image: video });
           },
           width: 640,
           height: 480
@@ -486,17 +518,16 @@
         camera.start();
         isRunning = true;
         loading.style.display = 'none';
+        createGalaxy(450);
+        statusText.textContent = "Kamera aktif";
       } catch (err) {
-        alert('Kamera tidak bisa diakses. Pastikan izin kamera diberikan.');
+        alert('Gagal akses kamera. Izinkan kamera ya.');
         console.error(err);
       }
     });
 
     document.getElementById('btnStop').addEventListener('click', () => {
-      if (camera) {
-        camera.stop();
-        camera = null;
-      }
+      if (camera) { camera.stop(); camera = null; }
       if (video.srcObject) {
         video.srcObject.getTracks().forEach(t => t.stop());
         video.srcObject = null;
@@ -507,12 +538,22 @@
       statusText.textContent = "Stopped";
       fingerStatus.style.display = "none";
       loading.style.display = 'block';
-      loading.textContent = "Camera Stopped";
+      loading.innerHTML = "Kamera dimatikan<br><small>Klik CAMERA untuk mulai lagi</small>";
     });
 
-    // Start animation immediately
+    document.getElementById('btnFullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert('Fullscreen gagal: ' + err.message);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    // Auto create galaxy saat load
+    createGalaxy(400);
     animate();
-    loading.textContent = "Klik tombol CAMERA untuk mulai";
   </script>
 </body>
 </html>
