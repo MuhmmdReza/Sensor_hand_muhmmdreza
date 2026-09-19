@@ -5,268 +5,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Neon Hand Galaxy</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    html, body { background: #000; overflow: hidden; height: 100%; width: 100%; color: #fff; user-select: none; }
+    #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-    html, body {
-      background: #000;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
-      color: #fff;
-      user-select: none;
-    }
-
-    #canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    .ui {
-      position: absolute;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .top-left {
-      top: 18px;
-      left: 18px;
-    }
-
+    .ui { position: absolute; z-index: 10; pointer-events: none; }
+    .top-left { top: 16px; left: 16px; }
     .title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 1px;
+      font-size: 18px; font-weight: 700; letter-spacing: 1px;
       background: linear-gradient(90deg, #00f0ff, #ff00ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 8px;
     }
-
-    .title .infinity {
-      font-size: 26px;
-      color: #00f0ff;
-      -webkit-text-fill-color: #00f0ff;
-    }
-
-    .subtitle {
-      font-size: 11px;
-      color: #00f0ff;
-      margin-top: 3px;
-      opacity: 0.85;
-    }
+    .title .infinity { font-size: 24px; color: #00f0ff; -webkit-text-fill-color: #00f0ff; }
+    .subtitle { font-size: 11px; color: #00f0ff; margin-top: 2px; opacity: 0.8; }
 
     .status-box {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      background: rgba(0, 15, 30, 0.75);
-      border: 1px solid #00f0ff;
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-size: 12px;
-      color: #00ff9d;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      backdrop-filter: blur(6px);
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(0,12,25,0.8); border: 1px solid #00f0ff;
+      border-radius: 10px; padding: 7px 12px; font-size: 12px; color: #00ff9d;
+      display: flex; align-items: center; gap: 6px; backdrop-filter: blur(6px);
     }
-
     .status-dot {
-      width: 7px;
-      height: 7px;
-      background: #00ff9d;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #00ff9d;
-      animation: pulse 1.4s infinite;
+      width: 7px; height: 7px; background: #00ff9d; border-radius: 50%;
+      box-shadow: 0 0 6px #00ff9d; animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .gesture-name {
+      position: absolute; top: 55px; right: 16px;
+      background: rgba(0,12,25,0.85); border: 1px solid #ff2d95;
+      border-radius: 8px; padding: 5px 12px; font-size: 12px; color: #ff9de0;
+      display: none; backdrop-filter: blur(6px);
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
-    }
-
-    .finger-status {
-      position: absolute;
-      top: 60px;
-      right: 18px;
-      background: rgba(0, 15, 30, 0.75);
-      border: 1px solid #00f0ff;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 12px;
-      color: #00f0ff;
-      display: none;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(6px);
-    }
-
-    /* Camera Preview - bawah & tidak distorsi */
     #camera-container {
-      position: absolute;
-      bottom: 105px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 200px;
-      height: 150px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 2px solid #00f0ff;
-      box-shadow: 0 0 18px rgba(0, 240, 255, 0.45);
-      z-index: 20;
-      background: #000;
+      position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+      width: 180px; height: 135px; border-radius: 12px; overflow: hidden;
+      border: 2px solid #00f0ff; box-shadow: 0 0 16px rgba(0,240,255,0.4); z-index: 20; background: #000;
     }
-
-    #video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      /* TANPA mirror */
-    }
-
-    #camera-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
+    #video { width: 100%; height: 100%; object-fit: cover; }
+    #camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
     .bottom-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 95px;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 36px;
-      z-index: 30;
-      pointer-events: auto;
+      position: absolute; bottom: 0; left: 0; width: 100%; height: 90px;
+      background: linear-gradient(to top, rgba(0,0,0,0.92), transparent);
+      display: flex; justify-content: center; align-items: center; gap: 32px; z-index: 30;
     }
-
     .btn {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: 2.5px solid;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
+      width: 54px; height: 54px; border-radius: 50%; border: 2.5px solid;
+      background: transparent; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s; position: relative;
     }
+    .btn-camera { border-color: #00f0ff; color: #00f0ff; }
+    .btn-camera:hover { background: rgba(0,240,255,0.15); box-shadow: 0 0 16px #00f0ff; }
+    .btn-stop { border-color: #ff2d95; color: #ff2d95; }
+    .btn-stop:hover { background: rgba(255,45,149,0.15); box-shadow: 0 0 16px #ff2d95; }
+    .btn-fs { border-color: #c4f; color: #e0f; }
+    .btn-fs:hover { background: rgba(180,0,255,0.15); box-shadow: 0 0 16px #c4f; }
+    .btn span { position: absolute; bottom: -18px; font-size: 10px; font-weight: 600; }
 
-    .btn-camera {
-      border-color: #00f0ff;
-      color: #00f0ff;
-    }
-    .btn-camera:hover {
-      background: rgba(0, 240, 255, 0.15);
-      box-shadow: 0 0 18px #00f0ff;
-    }
-
-    .btn-stop {
-      border-color: #ff2d95;
-      color: #ff2d95;
-    }
-    .btn-stop:hover {
-      background: rgba(255, 45, 149, 0.15);
-      box-shadow: 0 0 18px #ff2d95;
-    }
-
-    .btn-fs {
-      border-color: #a0f;
-      color: #c8f;
-    }
-    .btn-fs:hover {
-      background: rgba(170, 0, 255, 0.15);
-      box-shadow: 0 0 18px #a0f;
-    }
-
-    .btn span {
-      position: absolute;
-      bottom: -20px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
-
-    .hint {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      font-size: 11px;
-      color: #999;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .hint-right {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      font-size: 11px;
-      color: #999;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+    .hint { position: absolute; bottom: 14px; left: 14px; font-size: 11px; color: #888; }
+    .hint-right { position: absolute; bottom: 14px; right: 14px; font-size: 11px; color: #888; }
 
     .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #00f0ff;
-      font-size: 16px;
-      z-index: 100;
-      text-align: center;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      color: #00f0ff; font-size: 15px; z-index: 100; text-align: center; line-height: 1.5;
     }
   </style>
 </head>
 <body>
   <div class="loading" id="loading">
-    Klik CAMERA untuk mulai<br>
-    <small style="font-size:12px;opacity:0.7">Lalu klik FULLSCREEN</small>
+    Klik <b>CAMERA</b> lalu <b>FULLSCREEN</b><br>
+    <small style="opacity:0.7">Gunakan pola tangan</small>
   </div>
 
   <canvas id="canvas"></canvas>
 
   <div class="ui top-left">
-    <div class="title">
-      <span class="infinity">∞</span>
-      NEON HAND GALAXY
-    </div>
-    <div class="subtitle">DRAW WITH YOUR FINGER • 3D PARTICLE EFFECT</div>
+    <div class="title"><span class="infinity">∞</span> NEON HAND GALAXY</div>
+    <div class="subtitle">HAND GESTURE • 3D NEON PARTICLE</div>
   </div>
 
-  <div class="status-box" id="statusBox">
+  <div class="status-box">
     <div class="status-dot"></div>
     <span id="statusText">Menunggu kamera...</span>
   </div>
 
-  <div class="finger-status" id="fingerStatus">
-    ✋ Index Finger Detected
-  </div>
+  <div class="gesture-name" id="gestureName">—</div>
 
   <div id="camera-container">
     <video id="video" autoplay playsinline muted></video>
@@ -274,13 +100,10 @@
   </div>
 
   <div class="bottom-bar">
-    <div class="hint">
-      <span>🧊</span>
-      Build your imagination with neon particles
-    </div>
+    <div class="hint">Neon particle galaxy</div>
 
     <button class="btn btn-camera" id="btnCamera">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
         <circle cx="12" cy="13" r="4"/>
       </svg>
@@ -288,23 +111,18 @@
     </button>
 
     <button class="btn btn-stop" id="btnStop">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="6" y="6" width="12" height="12" rx="1"/>
-      </svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
       <span>STOP</span>
     </button>
 
     <button class="btn btn-fs" id="btnFullscreen">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
       </svg>
       <span>FULLSCREEN</span>
     </button>
 
-    <div class="hint-right">
-      Use your index finger to draw anything
-      <span>👆</span>
-    </div>
+    <div class="hint-right">Gesture mode</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -320,107 +138,216 @@
     const camCtx = camOverlay.getContext('2d');
     const loading = document.getElementById('loading');
     const statusText = document.getElementById('statusText');
-    const fingerStatus = document.getElementById('fingerStatus');
+    const gestureNameEl = document.getElementById('gestureName');
 
-    let width, height;
-    let particles = [];
-    let isRunning = false;
-    let camera = null;
-    let lastFinger = null;
-    let galaxyCenter = { x: 0, y: 0 };
-    let time = 0;
+    let W, H, particles = [], isRunning = false, camera = null;
+    let handCenter = { x: 0, y: 0 };
+    let currentGesture = 'none';
+    let gestureStable = 'none';
+    let gestureCounter = 0;
+    const STABLE_FRAMES = 4; // anti kedip
 
     function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      camOverlay.width = 200;
-      camOverlay.height = 150;
-      galaxyCenter = { x: width / 2, y: height / 2 - 40 };
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      camOverlay.width = 180;
+      camOverlay.height = 135;
     }
     window.addEventListener('resize', resize);
     resize();
 
-    // ====================== PARTICLE ======================
+    // ========== PARTICLE ==========
     class Particle {
-      constructor(x, y, isGalaxy = false) {
-        this.x = x;
-        this.y = y;
-        this.ox = x; // original for galaxy pull
-        this.oy = y;
-        this.vx = (Math.random() - 0.5) * 2.2;
-        this.vy = (Math.random() - 0.5) * 2.2;
-        this.life = 1;
-        this.decay = isGalaxy ? 0.003 + Math.random() * 0.004 : 0.012 + Math.random() * 0.01;
-        this.size = 0.7 + Math.random() * 1.6;   // LEBIH KECIL
-        this.hue = 270 + Math.random() * 90;
-        this.isGalaxy = isGalaxy;
+      constructor() {
+        this.x = W / 2;
+        this.y = H / 2;
+        this.vx = 0;
+        this.vy = 0;
+        this.size = 0.55 + Math.random() * 1.25;
+        this.hue = 260 + Math.random() * 100;
+        this.target = { x: W / 2, y: H / 2 };
         this.angle = Math.random() * Math.PI * 2;
-        this.radius = Math.random() * 180 + 40;
-        this.speed = 0.008 + Math.random() * 0.012;
+        this.orbit = 0.3 + Math.random() * 0.5;
       }
-
-      update(finger) {
-        if (this.isGalaxy && !finger) {
-          // Galaksi berputar
-          this.angle += this.speed;
-          this.x = galaxyCenter.x + Math.cos(this.angle) * this.radius;
-          this.y = galaxyCenter.y + Math.sin(this.angle) * this.radius * 0.6;
-          this.vx *= 0.95;
-          this.vy *= 0.95;
-        } else if (finger) {
-          // Tarik ke jari + gerak cepat
-          const dx = finger.x - this.x;
-          const dy = finger.y - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          this.vx += (dx / dist) * 0.35;
-          this.vy += (dy / dist) * 0.35;
-          this.vx *= 0.92;
-          this.vy *= 0.92;
-          this.x += this.vx;
-          this.y += this.vy;
-        } else {
-          this.x += this.vx;
-          this.y += this.vy;
-          this.vx *= 0.96;
-          this.vy *= 0.96;
-        }
-
-        this.life -= this.decay;
+      update() {
+        const dx = this.target.x - this.x;
+        const dy = this.target.y - this.y;
+        this.vx += dx * 0.08;
+        this.vy += dy * 0.08;
+        this.vx *= 0.84;
+        this.vy *= 0.84;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.angle += 0.015;
+        this.x += Math.cos(this.angle) * this.orbit;
+        this.y += Math.sin(this.angle) * this.orbit * 0.7;
       }
-
-      draw(ctx) {
+      draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${this.hue}, 100%, 68%, ${this.life * 0.9})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = `hsla(${this.hue}, 100%, 60%, 0.7)`;
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, 0.88)`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `hsla(${this.hue}, 100%, 60%, 0.75)`;
         ctx.fill();
         ctx.shadowBlur = 0;
       }
     }
 
-    // Buat galaksi awal
-    function createGalaxy(count = 450) {
+    function initParticles(n = 500) {
       particles = [];
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const r = Math.random() * 160 + 30;
-        const x = galaxyCenter.x + Math.cos(angle) * r;
-        const y = galaxyCenter.y + Math.sin(angle) * r * 0.55;
-        particles.push(new Particle(x, y, true));
+      for (let i = 0; i < n; i++) particles.push(new Particle());
+    }
+
+    // ========== SHAPES ==========
+    function makeBall(cx, cy, r = 68) {
+      const pts = [];
+      for (let i = 0; i < 500; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const b = Math.acos(2 * Math.random() - 1);
+        pts.push({
+          x: cx + r * Math.sin(b) * Math.cos(a),
+          y: cy + r * Math.sin(b) * Math.sin(a) * 0.82
+        });
+      }
+      return pts;
+    }
+
+    function makeDonut(cx, cy, R = 72, r = 26) {
+      const pts = [];
+      for (let i = 0; i < 500; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI * 2;
+        pts.push({
+          x: cx + (R + r * Math.cos(phi)) * Math.cos(theta),
+          y: cy + (R + r * Math.cos(phi)) * Math.sin(theta) * 0.72
+        });
+      }
+      return pts;
+    }
+
+    function makeHeart(cx, cy, s = 1.05) {
+      const pts = [];
+      for (let i = 0; i < 500; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        pts.push({ x: cx + x * s * 2.7, y: cy + y * s * 2.7 });
+      }
+      return pts;
+    }
+
+    function makeScatter(cx, cy) {
+      const pts = [];
+      for (let i = 0; i < 500; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = 50 + Math.random() * 210;
+        pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.68 });
+      }
+      return pts;
+    }
+
+    function makeLetterN(cx, cy, s = 52) {
+      const pts = [];
+      for (let i = 0; i < 160; i++) pts.push({ x: cx - s, y: cy - s + (i / 160) * s * 2 });
+      for (let i = 0; i < 180; i++) pts.push({ x: cx - s + (i / 180) * s * 2, y: cy - s + (i / 180) * s * 2 });
+      for (let i = 0; i < 160; i++) pts.push({ x: cx + s, y: cy - s + (i / 160) * s * 2 });
+      return pts;
+    }
+
+    function makeLetterR(cx, cy, s = 52) {
+      const pts = [];
+      for (let i = 0; i < 150; i++) pts.push({ x: cx - s, y: cy - s + (i / 150) * s * 2 });
+      for (let i = 0; i < 110; i++) {
+        const a = (i / 110) * Math.PI;
+        pts.push({ x: cx - s + Math.sin(a) * s * 1.05, y: cy - s + (1 - Math.cos(a)) * s * 0.65 });
+      }
+      for (let i = 0; i < 130; i++) pts.push({ x: cx - s + (i / 130) * s * 1.45, y: cy + (i / 130) * s * 0.95 });
+      return pts;
+    }
+
+    function applyShape(type, cx, cy) {
+      let pts;
+      if (type === 'ball') pts = makeBall(cx, cy);
+      else if (type === 'donut') pts = makeDonut(cx, cy);
+      else if (type === 'heart') pts = makeHeart(cx, cy);
+      else if (type === 'scatter') pts = makeScatter(cx, cy);
+      else if (type === 'N') pts = makeLetterN(cx, cy);
+      else if (type === 'R') pts = makeLetterR(cx, cy);
+      else pts = makeBall(cx, cy, 45);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].target = pts[i % pts.length];
       }
     }
 
-    function emitFromFinger(x, y, count = 5) {
-      for (let i = 0; i < count; i++) {
-        particles.push(new Particle(x + (Math.random()-0.5)*8, y + (Math.random()-0.5)*8, false));
-      }
-      if (particles.length > 900) {
-        particles.splice(0, particles.length - 900);
-      }
+    // ========== OPTIMIZED GESTURE DETECTION ==========
+    function distance(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
     }
 
-    // ====================== HAND ======================
+    function isExtended(landmarks, tip, pip, mcp) {
+      // lebih robust: tip harus lebih jauh dari mcp daripada pip
+      const tipToMcp = distance(landmarks[tip], landmarks[mcp]);
+      const pipToMcp = distance(landmarks[pip], landmarks[mcp]);
+      return tipToMcp > pipToMcp * 1.15;
+    }
+
+    function detectGesture(landmarks, handedness) {
+      const isRight = handedness === 'Right';
+
+      // Finger states
+      const thumbExt = isRight
+        ? landmarks[4].x < landmarks[3].x - 0.02
+        : landmarks[4].x > landmarks[3].x + 0.02;
+
+      const indexExt  = isExtended(landmarks, 8, 6, 5);
+      const middleExt = isExtended(landmarks, 12, 10, 9);
+      const ringExt   = isExtended(landmarks, 16, 14, 13);
+      const pinkyExt  = isExtended(landmarks, 20, 18, 17);
+
+      const extCount = [indexExt, middleExt, ringExt, pinkyExt].filter(Boolean).length;
+
+      // Jarak penting
+      const thumbIndexDist = distance(landmarks[4], landmarks[8]);
+      const thumbPinkyDist = distance(landmarks[4], landmarks[20]);
+
+      // 1. Fist (semua jari tertutup)
+      if (!indexExt && !middleExt && !ringExt && !pinkyExt) {
+        return 'ball';
+      }
+
+      // 2. Open hand / 🖐️
+      if (extCount >= 4) {
+        return 'scatter';
+      }
+
+      // 3. OK / 👌 (thumb dekat index tip + jari lain down)
+      if (indexExt && !middleExt && !ringExt && !pinkyExt && thumbIndexDist < 0.065) {
+        return 'donut';
+      }
+
+      // 4. Heart / 🫰 (index + thumb extended, jarak sedang, jari lain down)
+      if (indexExt && thumbExt && !middleExt && !ringExt && !pinkyExt && thumbIndexDist < 0.12) {
+        return 'heart';
+      }
+
+      // 5. Pointing (hanya index) → N
+      if (indexExt && !middleExt && !ringExt && !pinkyExt && !thumbExt) {
+        return 'N';
+      }
+
+      // 6. Call me / 🤙 (thumb + pinky)
+      if (thumbExt && pinkyExt && !indexExt && !middleExt && !ringExt) {
+        return 'R';
+      }
+
+      // Fallback
+      if (extCount >= 3) return 'scatter';
+      if (extCount <= 1) return 'ball';
+      return 'heart';
+    }
+
+    // ========== MEDIAPIPE ==========
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
     });
@@ -428,8 +355,8 @@
     hands.setOptions({
       maxNumHands: 1,
       modelComplexity: 1,
-      minDetectionConfidence: 0.65,
-      minTrackingConfidence: 0.55
+      minDetectionConfidence: 0.72,
+      minTrackingConfidence: 0.65
     });
 
     hands.onResults(onResults);
@@ -440,93 +367,94 @@
       camCtx.drawImage(results.image, 0, 0, camOverlay.width, camOverlay.height);
 
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        const landmarks = results.multiHandLandmarks[0];
-        const tip = landmarks[8];
+        const lm = results.multiHandLandmarks[0];
+        const handedness = results.multiHandedness[0].label; // "Left" or "Right"
 
-        // TANPA mirror
-        const x = tip.x * width;
-        const y = tip.y * height;
+        drawConnectors(camCtx, lm, HAND_CONNECTIONS, { color: '#00f0ff', lineWidth: 1.5 });
+        drawLandmarks(camCtx, lm, { color: '#ff2d95', lineWidth: 1, radius: 2.2 });
 
-        drawConnectors(camCtx, landmarks, HAND_CONNECTIONS, {color: '#00f0ff', lineWidth: 1.5});
-        drawLandmarks(camCtx, landmarks, {color: '#ff2d95', lineWidth: 1, radius: 2.5});
+        // Palm center
+        handCenter.x = lm[9].x * W;
+        handCenter.y = lm[9].y * H;
 
-        camCtx.beginPath();
-        camCtx.arc(tip.x * camOverlay.width, tip.y * camOverlay.height, 7, 0, Math.PI*2);
-        camCtx.strokeStyle = '#00ff9d';
-        camCtx.lineWidth = 2;
-        camCtx.stroke();
+        // Detect + smoothing
+        const rawGesture = detectGesture(lm, handedness);
 
-        if (lastFinger) {
-          const dist = Math.hypot(x - lastFinger.x, y - lastFinger.y);
-          const count = Math.min(9, Math.floor(dist / 2.5) + 2);
-          emitFromFinger(x, y, count);
+        if (rawGesture === currentGesture) {
+          gestureCounter++;
         } else {
-          emitFromFinger(x, y, 6);
+          gestureCounter = 0;
+          currentGesture = rawGesture;
         }
-        lastFinger = { x, y };
 
-        statusText.textContent = "HAND DETECTED • Tracking...";
-        fingerStatus.style.display = "flex";
+        if (gestureCounter >= STABLE_FRAMES && gestureStable !== currentGesture) {
+          gestureStable = currentGesture;
+          applyShape(gestureStable, handCenter.x, handCenter.y);
+
+          const names = {
+            ball: 'BOLA',
+            donut: 'DONAT',
+            heart: 'LOVE',
+            scatter: 'HANCUR',
+            N: 'HURUF N',
+            R: 'HURUF R'
+          };
+          gestureNameEl.style.display = 'block';
+          gestureNameEl.textContent = names[gestureStable] || gestureStable;
+        } else {
+          // tetap update posisi bentuk biar ikut tangan
+          applyShape(gestureStable, handCenter.x, handCenter.y);
+        }
+
+        statusText.textContent = 'HAND DETECTED';
       } else {
-        lastFinger = null;
-        statusText.textContent = "Mencari tangan...";
-        fingerStatus.style.display = "none";
+        currentGesture = 'none';
+        gestureStable = 'none';
+        gestureCounter = 0;
+        gestureNameEl.style.display = 'none';
+        statusText.textContent = 'Mencari tangan...';
       }
       camCtx.restore();
     }
 
-    // ====================== ANIMATE ======================
+    // ========== ANIMATE ==========
     function animate() {
-      time += 0.016;
-      ctx.fillStyle = 'rgba(0, 0, 6, 0.22)';
-      ctx.fillRect(0, 0, width, height);
-
-      const finger = lastFinger;
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.update(finger);
-        p.draw(ctx);
-        if (p.life <= 0) particles.splice(i, 1);
+      ctx.fillStyle = 'rgba(0, 0, 5, 0.2)';
+      ctx.fillRect(0, 0, W, H);
+      for (const p of particles) {
+        p.update();
+        p.draw();
       }
-
-      // Jaga jumlah partikel galaksi tetap ada
-      if (!finger && particles.length < 380) {
-        createGalaxy(80);
-      }
-
       requestAnimationFrame(animate);
     }
 
-    // ====================== CONTROLS ======================
-    document.getElementById('btnCamera').addEventListener('click', async () => {
+    // ========== CONTROLS ==========
+    document.getElementById('btnCamera').onclick = async () => {
       if (isRunning) return;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+          video: { facingMode: 'user', width: 640, height: 480 }
         });
         video.srcObject = stream;
         await video.play();
 
         camera = new Camera(video, {
-          onFrame: async () => {
-            await hands.send({ image: video });
-          },
+          onFrame: async () => await hands.send({ image: video }),
           width: 640,
           height: 480
         });
         camera.start();
         isRunning = true;
         loading.style.display = 'none';
-        createGalaxy(450);
-        statusText.textContent = "Kamera aktif";
-      } catch (err) {
-        alert('Gagal akses kamera. Izinkan kamera ya.');
-        console.error(err);
+        initParticles(500);
+        applyShape('ball', W / 2, H / 2 - 40);
+        statusText.textContent = 'Kamera aktif';
+      } catch (e) {
+        alert('Izinkan akses kamera');
       }
-    });
+    };
 
-    document.getElementById('btnStop').addEventListener('click', () => {
+    document.getElementById('btnStop').onclick = () => {
       if (camera) { camera.stop(); camera = null; }
       if (video.srcObject) {
         video.srcObject.getTracks().forEach(t => t.stop());
@@ -534,25 +462,24 @@
       }
       isRunning = false;
       particles = [];
-      lastFinger = null;
-      statusText.textContent = "Stopped";
-      fingerStatus.style.display = "none";
+      gestureStable = 'none';
+      gestureNameEl.style.display = 'none';
+      statusText.textContent = 'Stopped';
       loading.style.display = 'block';
-      loading.innerHTML = "Kamera dimatikan<br><small>Klik CAMERA untuk mulai lagi</small>";
-    });
+      loading.innerHTML = 'Kamera dimatikan<br><small>Klik CAMERA untuk mulai</small>';
+    };
 
-    document.getElementById('btnFullscreen').addEventListener('click', () => {
+    document.getElementById('btnFullscreen').onclick = () => {
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-          alert('Fullscreen gagal: ' + err.message);
-        });
+        document.documentElement.requestFullscreen();
       } else {
         document.exitFullscreen();
       }
-    });
+    };
 
-    // Auto create galaxy saat load
-    createGalaxy(400);
+    // Start
+    initParticles(420);
+    applyShape('ball', W / 2, H / 2);
     animate();
   </script>
 </body>
