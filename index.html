@@ -1,486 +1,227 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Neon Hand Galaxy</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Nebula N • 🤙</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-    html, body { background: #000; overflow: hidden; height: 100%; width: 100%; color: #fff; user-select: none; }
-    #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-
-    .ui { position: absolute; z-index: 10; pointer-events: none; }
-    .top-left { top: 16px; left: 16px; }
-    .title {
-      font-size: 18px; font-weight: 700; letter-spacing: 1px;
-      background: linear-gradient(90deg, #00f0ff, #ff00ff);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .title .infinity { font-size: 24px; color: #00f0ff; -webkit-text-fill-color: #00f0ff; }
-    .subtitle { font-size: 11px; color: #00f0ff; margin-top: 2px; opacity: 0.8; }
-
-    .status-box {
-      position: absolute; top: 16px; right: 16px;
-      background: rgba(0,12,25,0.8); border: 1px solid #00f0ff;
-      border-radius: 10px; padding: 7px 12px; font-size: 12px; color: #00ff9d;
-      display: flex; align-items: center; gap: 6px; backdrop-filter: blur(6px);
-    }
-    .status-dot {
-      width: 7px; height: 7px; background: #00ff9d; border-radius: 50%;
-      box-shadow: 0 0 6px #00ff9d; animation: pulse 1.4s infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    .gesture-name {
-      position: absolute; top: 55px; right: 16px;
-      background: rgba(0,12,25,0.85); border: 1px solid #ff2d95;
-      border-radius: 8px; padding: 5px 12px; font-size: 12px; color: #ff9de0;
-      display: none; backdrop-filter: blur(6px);
-    }
-
-    #camera-container {
-      position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
-      width: 180px; height: 135px; border-radius: 12px; overflow: hidden;
-      border: 2px solid #00f0ff; box-shadow: 0 0 16px rgba(0,240,255,0.4); z-index: 20; background: #000;
-    }
-    #video { width: 100%; height: 100%; object-fit: cover; }
-    #camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-
-    .bottom-bar {
-      position: absolute; bottom: 0; left: 0; width: 100%; height: 90px;
-      background: linear-gradient(to top, rgba(0,0,0,0.92), transparent);
-      display: flex; justify-content: center; align-items: center; gap: 32px; z-index: 30;
-    }
-    .btn {
-      width: 54px; height: 54px; border-radius: 50%; border: 2.5px solid;
-      background: transparent; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: 0.2s; position: relative;
-    }
-    .btn-camera { border-color: #00f0ff; color: #00f0ff; }
-    .btn-camera:hover { background: rgba(0,240,255,0.15); box-shadow: 0 0 16px #00f0ff; }
-    .btn-stop { border-color: #ff2d95; color: #ff2d95; }
-    .btn-stop:hover { background: rgba(255,45,149,0.15); box-shadow: 0 0 16px #ff2d95; }
-    .btn-fs { border-color: #c4f; color: #e0f; }
-    .btn-fs:hover { background: rgba(180,0,255,0.15); box-shadow: 0 0 16px #c4f; }
-    .btn span { position: absolute; bottom: -18px; font-size: 10px; font-weight: 600; }
-
-    .hint { position: absolute; bottom: 14px; left: 14px; font-size: 11px; color: #888; }
-    .hint-right { position: absolute; bottom: 14px; right: 14px; font-size: 11px; color: #888; }
-
-    .loading {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      color: #00f0ff; font-size: 15px; z-index: 100; text-align: center; line-height: 1.5;
-    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial,sans-serif}
+    #app{position:fixed;inset:0;background:#000;overflow:hidden}
+    #space{position:absolute;inset:0;width:100%;height:100%;display:block}
+    #hud{position:absolute;top:max(14px,env(safe-area-inset-top));left:0;right:0;text-align:center;color:#fff;
+      text-shadow:0 0 12px #7cf;font-weight:700;pointer-events:none}
+    #mode{font-size:16px;letter-spacing:.5px}
+    #hint{font-size:12px;opacity:.7;margin-top:5px}
+    #cameraBox{position:absolute;left:50%;bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px));
+      transform:translateX(-50%);width:min(42vw,280px);aspect-ratio:4/3;border:2px solid rgba(255,255,255,.8);
+      border-radius:16px;overflow:hidden;background:#111;box-shadow:0 0 24px rgba(90,180,255,.45)}
+    #video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+    #cameraLabel{position:absolute;left:8px;bottom:7px;color:#fff;font-size:11px;font-weight:700;
+      text-shadow:0 1px 5px #000}
+    #start{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.78);z-index:5}
+    button{border:0;border-radius:999px;padding:15px 24px;background:#fff;color:#000;font-weight:800;font-size:16px}
+    #status{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#aaa;font-size:11px;pointer-events:none}
   </style>
 </head>
 <body>
-  <div class="loading" id="loading">
-    Klik <b>CAMERA</b> lalu <b>FULLSCREEN</b><br>
-    <small style="opacity:0.7">Gunakan pola tangan</small>
+<div id="app">
+  <canvas id="space"></canvas>
+
+  <div id="hud">
+    <div id="mode">🌌 NEBULA N</div>
+    <div id="hint">Buat gestur 🤙 di depan kamera</div>
   </div>
 
-  <canvas id="canvas"></canvas>
-
-  <div class="ui top-left">
-    <div class="title"><span class="infinity">∞</span> NEON HAND GALAXY</div>
-    <div class="subtitle">HAND GESTURE • 3D NEON PARTICLE</div>
+  <div id="cameraBox">
+    <video id="video" autoplay muted playsinline></video>
+    <div id="cameraLabel">CAMERA • 🤙 = NEBULA N</div>
   </div>
 
-  <div class="status-box">
-    <div class="status-dot"></div>
-    <span id="statusText">Menunggu kamera...</span>
+  <div id="start">
+    <button id="startBtn">🚀 Mulai Kamera & Fullscreen</button>
   </div>
+  <div id="status">Menunggu kamera…</div>
+</div>
 
-  <div class="gesture-name" id="gestureName">—</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
-  <div id="camera-container">
-    <video id="video" autoplay playsinline muted></video>
-    <canvas id="camera-overlay"></canvas>
-  </div>
+<script>
+(() => {
+  const canvas = document.getElementById('space');
+  const video = document.getElementById('video');
+  const start = document.getElementById('start');
+  const startBtn = document.getElementById('startBtn');
+  const status = document.getElementById('status');
+  const mode = document.getElementById('mode');
 
-  <div class="bottom-bar">
-    <div class="hint">Neon particle galaxy</div>
+  // ===== THREE.JS NEBULA N =====
+  const scene = new THREE.Scene();
+  const camera3d = new THREE.PerspectiveCamera(48, innerWidth/innerHeight, .1, 100);
+  camera3d.position.z = 8;
 
-    <button class="btn btn-camera" id="btnCamera">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-      <span>CAMERA</span>
-    </button>
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight, false);
+  renderer.setClearColor(0x000008, 1);
 
-    <button class="btn btn-stop" id="btnStop">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
-      <span>STOP</span>
-    </button>
+  const N = 2600;
+  const positions = new Float32Array(N*3);
+  const colors = new Float32Array(N*3);
 
-    <button class="btn btn-fs" id="btnFullscreen">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-      </svg>
-      <span>FULLSCREEN</span>
-    </button>
-
-    <div class="hint-right">Gesture mode</div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-
-  <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const video = document.getElementById('video');
-    const camOverlay = document.getElementById('camera-overlay');
-    const camCtx = camOverlay.getContext('2d');
-    const loading = document.getElementById('loading');
-    const statusText = document.getElementById('statusText');
-    const gestureNameEl = document.getElementById('gestureName');
-
-    let W, H, particles = [], isRunning = false, camera = null;
-    let handCenter = { x: 0, y: 0 };
-    let currentGesture = 'none';
-    let gestureStable = 'none';
-    let gestureCounter = 0;
-    const STABLE_FRAMES = 4; // anti kedip
-
-    function resize() {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      camOverlay.width = 180;
-      camOverlay.height = 135;
+  // Titik utama huruf N + halo/debu nebula.
+  const strokes = [];
+  function stroke(x1,y1,x2,y2,count){
+    for(let i=0;i<count;i++){
+      const t=i/(count-1);
+      strokes.push({
+        x:x1+(x2-x1)*t,
+        y:y1+(y2-y1)*t
+      });
     }
-    window.addEventListener('resize', resize);
-    resize();
+  }
+  stroke(-2.1,-2.4,-2.1,2.4,700);
+  stroke(-2.1,2.4,2.1,-2.4,700);
+  stroke(2.1,-2.4,2.1,2.4,700);
 
-    // ========== PARTICLE ==========
-    class Particle {
-      constructor() {
-        this.x = W / 2;
-        this.y = H / 2;
-        this.vx = 0;
-        this.vy = 0;
-        this.size = 0.55 + Math.random() * 1.25;
-        this.hue = 260 + Math.random() * 100;
-        this.target = { x: W / 2, y: H / 2 };
-        this.angle = Math.random() * Math.PI * 2;
-        this.orbit = 0.3 + Math.random() * 0.5;
-      }
-      update() {
-        const dx = this.target.x - this.x;
-        const dy = this.target.y - this.y;
-        this.vx += dx * 0.08;
-        this.vy += dy * 0.08;
-        this.vx *= 0.84;
-        this.vy *= 0.84;
-        this.x += this.vx;
-        this.y += this.vy;
-        this.angle += 0.015;
-        this.x += Math.cos(this.angle) * this.orbit;
-        this.y += Math.sin(this.angle) * this.orbit * 0.7;
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, 0.88)`;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = `hsla(${this.hue}, 100%, 60%, 0.75)`;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-    }
+  for(let i=0;i<N;i++){
+    const p=strokes[Math.floor(Math.random()*strokes.length)];
+    const spread=.12 + Math.random()*.18;
+    positions[i*3] = p.x + (Math.random()-.5)*spread;
+    positions[i*3+1] = p.y + (Math.random()-.5)*spread;
+    positions[i*3+2] = (Math.random()-.5)*.45;
 
-    function initParticles(n = 500) {
-      particles = [];
-      for (let i = 0; i < n; i++) particles.push(new Particle());
-    }
+    const c=new THREE.Color();
+    c.setHSL(.58 + Math.random()*.18, .85, .45 + Math.random()*.35);
+    colors[i*3]=c.r; colors[i*3+1]=c.g; colors[i*3+2]=c.b;
+  }
 
-    // ========== SHAPES ==========
-    function makeBall(cx, cy, r = 68) {
-      const pts = [];
-      for (let i = 0; i < 500; i++) {
-        const a = Math.random() * Math.PI * 2;
-        const b = Math.acos(2 * Math.random() - 1);
-        pts.push({
-          x: cx + r * Math.sin(b) * Math.cos(a),
-          y: cy + r * Math.sin(b) * Math.sin(a) * 0.82
-        });
-      }
-      return pts;
-    }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
 
-    function makeDonut(cx, cy, R = 72, r = 26) {
-      const pts = [];
-      for (let i = 0; i < 500; i++) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.random() * Math.PI * 2;
-        pts.push({
-          x: cx + (R + r * Math.cos(phi)) * Math.cos(theta),
-          y: cy + (R + r * Math.cos(phi)) * Math.sin(theta) * 0.72
-        });
-      }
-      return pts;
-    }
+  const mat=new THREE.PointsMaterial({
+    size:.055,
+    vertexColors:true,
+    transparent:true,
+    opacity:.92,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false
+  });
+  const nebula=new THREE.Points(geo,mat);
+  scene.add(nebula);
 
-    function makeHeart(cx, cy, s = 1.05) {
-      const pts = [];
-      for (let i = 0; i < 500; i++) {
-        const t = Math.random() * Math.PI * 2;
-        const x = 16 * Math.pow(Math.sin(t), 3);
-        const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-        pts.push({ x: cx + x * s * 2.7, y: cy + y * s * 2.7 });
-      }
-      return pts;
-    }
+  // Debu bintang latar.
+  const starGeo=new THREE.BufferGeometry();
+  const starPos=new Float32Array(900*3);
+  for(let i=0;i<900*3;i+=3){
+    starPos[i]=(Math.random()-.5)*28;
+    starPos[i+1]=(Math.random()-.5)*18;
+    starPos[i+2]=(Math.random()-.5)*15;
+  }
+  starGeo.setAttribute('position',new THREE.BufferAttribute(starPos,3));
+  scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({
+    color:0x88aaff,size:.018,transparent:true,opacity:.8
+  })));
 
-    function makeScatter(cx, cy) {
-      const pts = [];
-      for (let i = 0; i < 500; i++) {
-        const a = Math.random() * Math.PI * 2;
-        const r = 50 + Math.random() * 210;
-        pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.68 });
-      }
-      return pts;
-    }
+  let targetRot=0, active=false;
+  function animate(t){
+    requestAnimationFrame(animate);
+    nebula.rotation.y += .0025;
+    nebula.rotation.z += (targetRot-nebula.rotation.z)*.025;
+    mat.size=.045 + Math.sin(t*.002)*.012;
+    renderer.render(scene,camera3d);
+  }
+  animate(0);
 
-    function makeLetterN(cx, cy, s = 52) {
-      const pts = [];
-      for (let i = 0; i < 160; i++) pts.push({ x: cx - s, y: cy - s + (i / 160) * s * 2 });
-      for (let i = 0; i < 180; i++) pts.push({ x: cx - s + (i / 180) * s * 2, y: cy - s + (i / 180) * s * 2 });
-      for (let i = 0; i < 160; i++) pts.push({ x: cx + s, y: cy - s + (i / 160) * s * 2 });
-      return pts;
-    }
+  addEventListener('resize',()=>{
+    camera3d.aspect=innerWidth/innerHeight;
+    camera3d.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight,false);
+  });
 
-    function makeLetterR(cx, cy, s = 52) {
-      const pts = [];
-      for (let i = 0; i < 150; i++) pts.push({ x: cx - s, y: cy - s + (i / 150) * s * 2 });
-      for (let i = 0; i < 110; i++) {
-        const a = (i / 110) * Math.PI;
-        pts.push({ x: cx - s + Math.sin(a) * s * 1.05, y: cy - s + (1 - Math.cos(a)) * s * 0.65 });
-      }
-      for (let i = 0; i < 130; i++) pts.push({ x: cx - s + (i / 130) * s * 1.45, y: cy + (i / 130) * s * 0.95 });
-      return pts;
-    }
+  // ===== MEDIAPIPE HAND =====
+  const hands = new Hands({
+    locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+  });
+  hands.setOptions({
+    maxNumHands:1,
+    modelComplexity:0,
+    minDetectionConfidence:.55,
+    minTrackingConfidence:.55
+  });
 
-    function applyShape(type, cx, cy) {
-      let pts;
-      if (type === 'ball') pts = makeBall(cx, cy);
-      else if (type === 'donut') pts = makeDonut(cx, cy);
-      else if (type === 'heart') pts = makeHeart(cx, cy);
-      else if (type === 'scatter') pts = makeScatter(cx, cy);
-      else if (type === 'N') pts = makeLetterN(cx, cy);
-      else if (type === 'R') pts = makeLetterR(cx, cy);
-      else pts = makeBall(cx, cy, 45);
+  function dist(a,b){
+    return Math.hypot(a.x-b.x,a.y-b.y);
+  }
 
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].target = pts[i % pts.length];
+  // Deteksi sederhana gestur 🤙:
+  // jempol + kelingking relatif terbuka, tiga jari tengah menekuk.
+  function isCallMe(lm){
+    const indexFold=lm[8].y > lm[6].y;
+    const middleFold=lm[12].y > lm[10].y;
+    const ringFold=lm[16].y > lm[14].y;
+    const thumbOpen=dist(lm[4],lm[5]) > dist(lm[3],lm[5])*1.05;
+    const pinkyOpen=dist(lm[20],lm[17]) > dist(lm[18],lm[17])*1.05;
+    return indexFold && middleFold && ringFold && thumbOpen && pinkyOpen;
+  }
+
+  hands.onResults(results=>{
+    if(results.multiHandLandmarks && results.multiHandLandmarks.length){
+      const lm=results.multiHandLandmarks[0];
+      if(isCallMe(lm)){
+        active=true;
+        mode.textContent='🤙 NEBULA N AKTIF';
+        status.textContent='Gestur terdeteksi • Nebula N aktif';
+        mat.opacity=.98;
+        targetRot=.08;
+      }else{
+        active=false;
+        mode.textContent='🌌 NEBULA N';
+        status.textContent='Buat gestur 🤙 untuk mengaktifkan';
+        mat.opacity=.72;
+        targetRot=0;
       }
     }
+  });
 
-    // ========== OPTIMIZED GESTURE DETECTION ==========
-    function distance(a, b) {
-      return Math.hypot(a.x - b.x, a.y - b.y);
+  let mpCamera;
+  startBtn.addEventListener('click',async()=>{
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({
+        video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},
+        audio:false
+      });
+      video.srcObject=stream;
+      await video.play();
+
+      mpCamera=new Camera(video,{
+        onFrame:async()=>{ await hands.send({image:video}); },
+        width:640,height:480
+      });
+      mpCamera.start();
+
+      start.style.display='none';
+      status.textContent='Kamera aktif • buat gestur 🤙';
+
+      // Fullscreen browser: address bar hilang setelah browser mengizinkan.
+      if(document.documentElement.requestFullscreen){
+        try{ await document.documentElement.requestFullscreen(); }catch(e){}
+      }
+      if(screen.orientation && screen.orientation.lock){
+        try{ await screen.orientation.lock('landscape'); }catch(e){}
+      }
+    }catch(err){
+      status.textContent='Kamera gagal: '+err.message;
+      startBtn.textContent='🔄 Coba Lagi';
     }
-
-    function isExtended(landmarks, tip, pip, mcp) {
-      // lebih robust: tip harus lebih jauh dari mcp daripada pip
-      const tipToMcp = distance(landmarks[tip], landmarks[mcp]);
-      const pipToMcp = distance(landmarks[pip], landmarks[mcp]);
-      return tipToMcp > pipToMcp * 1.15;
-    }
-
-    function detectGesture(landmarks, handedness) {
-      const isRight = handedness === 'Right';
-
-      // Finger states
-      const thumbExt = isRight
-        ? landmarks[4].x < landmarks[3].x - 0.02
-        : landmarks[4].x > landmarks[3].x + 0.02;
-
-      const indexExt  = isExtended(landmarks, 8, 6, 5);
-      const middleExt = isExtended(landmarks, 12, 10, 9);
-      const ringExt   = isExtended(landmarks, 16, 14, 13);
-      const pinkyExt  = isExtended(landmarks, 20, 18, 17);
-
-      const extCount = [indexExt, middleExt, ringExt, pinkyExt].filter(Boolean).length;
-
-      // Jarak penting
-      const thumbIndexDist = distance(landmarks[4], landmarks[8]);
-      const thumbPinkyDist = distance(landmarks[4], landmarks[20]);
-
-      // 1. Fist (semua jari tertutup)
-      if (!indexExt && !middleExt && !ringExt && !pinkyExt) {
-        return 'ball';
-      }
-
-      // 2. Open hand / 🖐️
-      if (extCount >= 4) {
-        return 'scatter';
-      }
-
-      // 3. OK / 👌 (thumb dekat index tip + jari lain down)
-      if (indexExt && !middleExt && !ringExt && !pinkyExt && thumbIndexDist < 0.065) {
-        return 'donut';
-      }
-
-      // 4. Heart / 🫰 (index + thumb extended, jarak sedang, jari lain down)
-      if (indexExt && thumbExt && !middleExt && !ringExt && !pinkyExt && thumbIndexDist < 0.12) {
-        return 'heart';
-      }
-
-      // 5. Pointing (hanya index) → N
-      if (indexExt && !middleExt && !ringExt && !pinkyExt && !thumbExt) {
-        return 'N';
-      }
-
-      // 6. Call me / 🤙 (thumb + pinky)
-      if (thumbExt && pinkyExt && !indexExt && !middleExt && !ringExt) {
-        return 'R';
-      }
-
-      // Fallback
-      if (extCount >= 3) return 'scatter';
-      if (extCount <= 1) return 'ball';
-      return 'heart';
-    }
-
-    // ========== MEDIAPIPE ==========
-    const hands = new Hands({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-    });
-
-    hands.setOptions({
-      maxNumHands: 1,
-      modelComplexity: 1,
-      minDetectionConfidence: 0.72,
-      minTrackingConfidence: 0.65
-    });
-
-    hands.onResults(onResults);
-
-    function onResults(results) {
-      camCtx.save();
-      camCtx.clearRect(0, 0, camOverlay.width, camOverlay.height);
-      camCtx.drawImage(results.image, 0, 0, camOverlay.width, camOverlay.height);
-
-      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        const lm = results.multiHandLandmarks[0];
-        const handedness = results.multiHandedness[0].label; // "Left" or "Right"
-
-        drawConnectors(camCtx, lm, HAND_CONNECTIONS, { color: '#00f0ff', lineWidth: 1.5 });
-        drawLandmarks(camCtx, lm, { color: '#ff2d95', lineWidth: 1, radius: 2.2 });
-
-        // Palm center
-        handCenter.x = lm[9].x * W;
-        handCenter.y = lm[9].y * H;
-
-        // Detect + smoothing
-        const rawGesture = detectGesture(lm, handedness);
-
-        if (rawGesture === currentGesture) {
-          gestureCounter++;
-        } else {
-          gestureCounter = 0;
-          currentGesture = rawGesture;
-        }
-
-        if (gestureCounter >= STABLE_FRAMES && gestureStable !== currentGesture) {
-          gestureStable = currentGesture;
-          applyShape(gestureStable, handCenter.x, handCenter.y);
-
-          const names = {
-            ball: 'BOLA',
-            donut: 'DONAT',
-            heart: 'LOVE',
-            scatter: 'HANCUR',
-            N: 'HURUF N',
-            R: 'HURUF R'
-          };
-          gestureNameEl.style.display = 'block';
-          gestureNameEl.textContent = names[gestureStable] || gestureStable;
-        } else {
-          // tetap update posisi bentuk biar ikut tangan
-          applyShape(gestureStable, handCenter.x, handCenter.y);
-        }
-
-        statusText.textContent = 'HAND DETECTED';
-      } else {
-        currentGesture = 'none';
-        gestureStable = 'none';
-        gestureCounter = 0;
-        gestureNameEl.style.display = 'none';
-        statusText.textContent = 'Mencari tangan...';
-      }
-      camCtx.restore();
-    }
-
-    // ========== ANIMATE ==========
-    function animate() {
-      ctx.fillStyle = 'rgba(0, 0, 5, 0.2)';
-      ctx.fillRect(0, 0, W, H);
-      for (const p of particles) {
-        p.update();
-        p.draw();
-      }
-      requestAnimationFrame(animate);
-    }
-
-    // ========== CONTROLS ==========
-    document.getElementById('btnCamera').onclick = async () => {
-      if (isRunning) return;
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: 640, height: 480 }
-        });
-        video.srcObject = stream;
-        await video.play();
-
-        camera = new Camera(video, {
-          onFrame: async () => await hands.send({ image: video }),
-          width: 640,
-          height: 480
-        });
-        camera.start();
-        isRunning = true;
-        loading.style.display = 'none';
-        initParticles(500);
-        applyShape('ball', W / 2, H / 2 - 40);
-        statusText.textContent = 'Kamera aktif';
-      } catch (e) {
-        alert('Izinkan akses kamera');
-      }
-    };
-
-    document.getElementById('btnStop').onclick = () => {
-      if (camera) { camera.stop(); camera = null; }
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(t => t.stop());
-        video.srcObject = null;
-      }
-      isRunning = false;
-      particles = [];
-      gestureStable = 'none';
-      gestureNameEl.style.display = 'none';
-      statusText.textContent = 'Stopped';
-      loading.style.display = 'block';
-      loading.innerHTML = 'Kamera dimatikan<br><small>Klik CAMERA untuk mulai</small>';
-    };
-
-    document.getElementById('btnFullscreen').onclick = () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    };
-
-    // Start
-    initParticles(420);
-    applyShape('ball', W / 2, H / 2);
-    animate();
-  </script>
+  });
+})();
+</script>
 </body>
 </html>
